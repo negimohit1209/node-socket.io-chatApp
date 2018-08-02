@@ -12,13 +12,18 @@ app.use(express.static(publicPath));
 
 io.on('connection', (socket)=> {
     console.log(`new user connected`);
-    //emits newMessage to all the connected clients
-    // socket.emit('newMessage', {
-    //     from: 'Server',
-    //     text: 'hey from server',
-    //     createdAt: 123
-    // });
-    //function for receiving email from the client
+    
+    socket.emit('newMessage', {
+        from: "Admin",
+        text: 'Welcome to the chatapp',
+        createdAt: new Date().getTime()
+    });
+    socket.broadcast.emit('newMessage', {
+        from: "Admin",
+        text: "New user joined the room",
+        createdAt: new Date().getTime()
+    });
+
     socket.on('createMessage', (message)=>{
         console.log(`Message: `);
         console.log(JSON.stringify(message,undefined, 2));
@@ -27,6 +32,11 @@ io.on('connection', (socket)=> {
             text: message.text,
             createdAt: new Date().getTime()
         })
+        // socket.broadcast.emit('newMessage', {
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getTime()
+        // })
     })
     //when the user is disconnected
     socket.on('disconnect', ()=>{
